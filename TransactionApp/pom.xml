@@ -25,5 +25,6 @@
         </configuration>
       </plugin>
     </plugins>
+    <finalName>TransactionApp</finalName>
   </build>
 </project>
