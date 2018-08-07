@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import static java.util.Collections.list;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -52,8 +51,11 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     }
 
     @Override
-    public Transaction get(String transactionId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Transaction get(int userId, String transactionId) throws IOException {
+            List<Transaction> list = readFile();   
+            return list.stream().filter(item -> { 
+                return (item.getId().equals(transactionId) && item.getUserId() == userId);
+            }).collect(Collectors.toList()).get(0);
     }
     
     private List<Transaction> readFile() throws FileNotFoundException, IOException {

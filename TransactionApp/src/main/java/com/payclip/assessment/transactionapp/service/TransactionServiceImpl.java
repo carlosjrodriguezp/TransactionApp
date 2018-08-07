@@ -3,9 +3,6 @@ package com.payclip.assessment.transactionapp.service;
 import com.payclip.assessment.transactionapp.model.Transaction;
 import com.payclip.assessment.transactionapp.repository.TransactionRepository;
 import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,38 +16,46 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     TransactionRepository tr;
     
-    void addTtransaction(String transactionString) throws IOException {
+    void addTtransaction(String transactionString, int userId) throws IOException {
         MAPPER.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         Transaction transaction = MAPPER.readValue(transactionString, Transaction.class);
         transaction.generateUUID();
+        transaction.setUserId(userId);
         System.out.println(tr.save(transaction));
     }
     
     void listTransactions(int userId) {
+        System.out.println("[");
         tr.list(userId).forEach((item) -> {
             System.out.println(item);
-        });        
+        });
+        System.out.println("]");
+    }
+    
+    void sumTransactions(int userId) {
+        System.out.println("{\"user_id\":" + userId + ",\"sum\":" + (float) tr.list(userId).stream().mapToDouble(item -> item.getAmount()).sum() + "}");
+    }
+    
+    void showTransaction(int userId, String transactionId) throws IOException {
+        System.out.println(tr.get(userId, transactionId));
     }
 
     @Override
-    public void processingTransaction(String arguments[]) {
+    public void processingTransaction(String arguments[]) throws IOException {
         if(arguments.length > 1) {
             if(arguments[0] != null && arguments[1] != null)
                 if(arguments[1].equals("add")){
-                try {
-                    addTtransaction(arguments[2]);
-                } catch (IOException ex) {
-                    Logger.getLogger(TransactionServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                    addTtransaction(arguments[2], Integer.parseInt(arguments[0]));
                 }else if(arguments[1].equals("list")){
                     listTransactions(Integer.parseInt(arguments[0]));
                 }else if(arguments[1].equals("sum")){
-                    System.out.println("SUM TRANSACTIONS: ./application <user_id> sum");
+                    sumTransactions(Integer.parseInt(arguments[0]));
                 }else if(arguments.length < 3){
                     System.out.println("SHOW TRANSACTION: ./application <user_id> <transaction_id>");
+                    showTransaction(Integer.parseInt(arguments[0]), arguments[1]);
                 }
         } else {
-            System.out.println("NO OPTION SELECTED");
+            System.out.println("OPERATION NOT VALID");
         }
     }
     
