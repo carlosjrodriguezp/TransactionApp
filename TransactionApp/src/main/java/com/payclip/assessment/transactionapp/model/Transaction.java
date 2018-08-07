@@ -1,22 +1,25 @@
 package com.payclip.assessment.transactionapp.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Transaction {
     
+    @JsonProperty("transaction_id")
     private String id;
+    @JsonProperty("amount")
     private float amount;
+    @JsonProperty("description")
     private String description;
+    @JsonProperty("date")
     private Date date;
+    @JsonProperty("user_id")
     private int userId;
 
-    public Transaction(String id, float amount, String description, Date date, int userId) {
-        this.id = id;
-        this.amount = amount;
-        this.description = description;
-        this.date = date;
-        this.userId = userId;
+    public Transaction() {
     }
 
     public String getId() {
@@ -65,7 +68,8 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return "{" + "transaction_id:" + id + ",amount:" + amount + ",description:" + description + ",date:" + date + ",user_id:" + userId + '}';
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        return "{" + "\"transaction_id\":\"" + id + "\",\"amount\":" + amount + ",\"description\":\"" + description + "\",\"date\":\"" + df.format(date) + "\",\"user_id\":" + userId + '}';
     }        
     
 }
