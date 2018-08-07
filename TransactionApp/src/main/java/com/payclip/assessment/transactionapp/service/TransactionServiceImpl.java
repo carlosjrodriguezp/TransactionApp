@@ -37,7 +37,11 @@ public class TransactionServiceImpl implements TransactionService {
     }
     
     void showTransaction(int userId, String transactionId) throws IOException {
-        System.out.println(tr.get(userId, transactionId));
+        Transaction transaction = tr.get(userId, transactionId);
+        if(transaction == null)
+            System.out.println("TRANSACTION NOT FOUND");
+        else
+            System.out.println(tr.get(userId, transactionId));
     }
 
     @Override
@@ -51,7 +55,6 @@ public class TransactionServiceImpl implements TransactionService {
                 }else if(arguments[1].equals("sum")){
                     sumTransactions(Integer.parseInt(arguments[0]));
                 }else if(arguments.length < 3){
-                    System.out.println("SHOW TRANSACTION: ./application <user_id> <transaction_id>");
                     showTransaction(Integer.parseInt(arguments[0]), arguments[1]);
                 }
         } else {

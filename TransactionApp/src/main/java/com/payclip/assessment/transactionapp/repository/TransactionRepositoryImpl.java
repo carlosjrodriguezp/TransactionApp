@@ -52,10 +52,15 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 
     @Override
     public Transaction get(int userId, String transactionId) throws IOException {
+        try{
             List<Transaction> list = readFile();   
             return list.stream().filter(item -> { 
                 return (item.getId().equals(transactionId) && item.getUserId() == userId);
             }).collect(Collectors.toList()).get(0);
+        }catch(IndexOutOfBoundsException ex) {
+            return null;
+        }
+
     }
     
     private List<Transaction> readFile() throws FileNotFoundException, IOException {
